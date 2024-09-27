@@ -17,6 +17,19 @@ class UsersController {
         const newUser = await dbClient.users.insert({ email, password: sha1(password) });
         return res.status(201).send({ id: newUser.id, email: newUser.email });
     }
+
+    static async getMe(req, res) {
+        const token = req.header("X-Token");
+
+        // Check if token is provided
+        if (!token) return res.status(401).send({ error: "Unauthorized" });
+
+        // Check if token is valid
+        const user = await dbClient.users.find({ id: req.userId });
+        if (!user) return res.status(401).send({ error: "Unauthorized" });
+
+        return res.status(200).send({ id: user.id, email: user.email });
+    }
 }
 
 export default UsersController;
