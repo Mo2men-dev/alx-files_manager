@@ -33,7 +33,7 @@ class AuthController {
         return res.status(200).send({ token });
     }
 
-    async getDisconnect(req, res) {
+    static async getDisconnect(req, res) {
         const token = req.header("X-Token");
 
         // Check if token is provided

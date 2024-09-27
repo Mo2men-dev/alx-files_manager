@@ -2,6 +2,8 @@ import express from "express";
 
 import AppController from "../controllers/AppController";
 import UsersController from "../controllers/UsersController";
+import AuthController from "../controllers/AuthController";
+import FilesController from "../controllers/FilesController";
 
 const mainRouter = (app) => {
     const router = express.Router();
@@ -13,12 +15,17 @@ const mainRouter = (app) => {
     router.get("/stats", AppController.getStats);
 
     // Auth routes
-    router.get("/connect", UsersController.getConnect);
-    router.get("/disconnect", UsersController.getDisconnect);
+    router.get("/connect", AuthController.getConnect);
+    router.get("/disconnect", AuthController.getDisconnect);
 
     // Users routes
     router.post("/users", UsersController.postNew);
     router.get("/users/me", UsersController.getMe);
+
+    // Files routes
+    router.post("/files", FilesController.postUpload);
+    router.get("/files/:id", FilesController.getShow);
+    router.get("/files", FilesController.getIndex);
 };
 
 export default mainRouter;
