@@ -1,3 +1,6 @@
+import fs from 'fs';
+import mime from 'mime-types';
+
 import dbClient from "../utils/db";
 import { getUserId } from "../utils/users";
 
@@ -87,6 +90,32 @@ class FilesController {
         await dbClient.files.save(file);
 
         return res.status(200).send(file);
+    }
+
+    static async getFile(req, res) {
+        const userId = await getUserId(req);
+        if (!userId) return res.status(401).send({ error: "Unauthorized" });
+
+        const { id } = req.params;
+        const file = await dbClient.files.find({ userId, id });
+
+        if (!file) return res.status(404).send({ error: "Not found" });
+        if (file.type === "folder") return res.status(400).send({ error: "A folder doesn't have content" });
+
+        const filePath = `${FOLDER_PATH}/${file.id}`;
+        const contentType = mime.contentType(file.name);
+
+        res.setHeader("Content-Type", contentType);
+
+        const data = null;
+
+        try {
+            data = await fs.promises.readFile(filePath);
+        } catch (error) {
+            return res.status(404).send({ error: "Not found" });
+        }
+
+        return res.status(200).send(data);
     }
 }
 

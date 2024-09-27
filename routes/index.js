@@ -28,6 +28,7 @@ const mainRouter = (app) => {
     router.get("/files", FilesController.getIndex);
     router.put("/files/:id/publish", FilesController.putPublish);
     router.put("/files/:id/publish", FilesController.putUnpublish);
+    router.get("/files/:id/data", FilesController.getFile);
 };
 
 export default mainRouter;
