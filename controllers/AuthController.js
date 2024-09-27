@@ -18,9 +18,9 @@ class AuthController {
 
         // Check if email and password are provided
         if (!email || !password) return res.status(401).send({ error: "Unauthorized" });
-
+        
         // Check if email is valid
-        const user = await dbClient.users.find({ email, password: sha1(password) });
+        const user = await dbClient.users.findOne({ email, password: sha1(password) });
 
         // Check if user exists
         if (!user) return res.status(401).send({ error: "Unauthorized" });

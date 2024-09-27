@@ -1,4 +1,4 @@
-import redisClient from "../config/redis.js";
+import redisClient from "./redis.js";
 
 export const getUserId = async (req) => {
     const token = req.header("X-Token");

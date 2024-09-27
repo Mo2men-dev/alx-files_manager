@@ -7,18 +7,15 @@ const URL = `mongodb://${DB_HOST}:${DB_PORT}/${DB_DATABASE}`;
 
 class DBClient {
     constructor() {
-        this.db = false;
-
         MongoClient.connect(URL, { useUnifiedTopology: true }, (err, client) => {
             if (!err) {
                 this.db = client.db(DB_DATABASE);
+                this.users = this.db.collection('users');
+                this.files = this.db.collection('files');
             } else {
                 this.db = false;
             }
         });
-
-        this.users = this.db.collection('users');
-        this.files = this.db.collection('files');
     }
 
     isAlive() {

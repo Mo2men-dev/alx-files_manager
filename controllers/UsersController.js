@@ -1,5 +1,6 @@
 import sha1 from "sha1";
 import dbClient from "../utils/db";
+import redisClient from "../utils/redis";
 
 class UsersController {
     static async postNew(req, res) {
@@ -10,7 +11,7 @@ class UsersController {
         if (!password) return res.status(400).send({ error: "Missing password" });
 
         // Check if email is valid
-        const user = await dbClient.users.find({ email });
+        const user = await dbClient.users.findOne({ email });
         if (user) return res.status(400).send({ error: "Already exist" });
 
         // Create new user
@@ -25,7 +26,11 @@ class UsersController {
         if (!token) return res.status(401).send({ error: "Unauthorized" });
 
         // Check if token is valid
-        const user = await dbClient.users.find({ id: req.userId });
+        const userId = await redisClient.get(`auth_${token}`);
+        if (!userId) return res.status(401).send({ error: "Unauthorized" });
+
+        // Get user
+        const user = await dbClient.users.findOne({ _id: userId });
         if (!user) return res.status(401).send({ error: "Unauthorized" });
 
         return res.status(200).send({ id: user.id, email: user.email });
